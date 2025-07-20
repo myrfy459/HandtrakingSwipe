@@ -2,31 +2,25 @@ import cv2
 import mediapipe as mp
 import pyautogui
 
-# Inisialisasi Mediapipe
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
+
 hands = mp_hands.Hands(max_num_hands=1, min_detection_confidence=0.7)
-
-# Buka kamera (ubah ke 1 jika webcam eksternal)
 cap = cv2.VideoCapture(1)
-# Set ukuran frame yang lebih kecil
-
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 350)
-
 
 prev_gesture = None
 
 def detect_fingers(hand_landmarks):
-    tips_ids = [8, 12, 16, 20]  # Telunjuk, tengah, manis, kelingking
+    tips_ids = [8, 12, 16, 20]
     fingers = []
 
     for tip_id in tips_ids:
-        # Bandingkan y koordinat ujung jari dengan ruas bawahnya
         is_up = hand_landmarks.landmark[tip_id].y < hand_landmarks.landmark[tip_id - 2].y
         fingers.append(1 if is_up else 0)
 
-    return fingers  # [telunjuk, tengah, manis, kelingking]
+    return fingers
 
 while True:
     ret, frame = cap.read()
@@ -43,9 +37,8 @@ while True:
         for hand_landmarks in result.multi_hand_landmarks:
             mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
-            fingers = detect_fingers(hand_landmarks)  # [telunjuk, tengah, manis, kelingking]
+            fingers = detect_fingers(hand_landmarks)
 
-            # Logika gesture
             if fingers == [1, 0, 0, 0]:
                 current_gesture = "left"
             elif fingers == [1, 1, 0, 0]:
@@ -63,10 +56,10 @@ while True:
     else:
         prev_gesture = None
 
-    preview = cv2.resize(frame, (640, 350))  # ubah 640x480 sesuai selera
+    preview = cv2.resize(frame, (640, 350))
     cv2.imshow("Hand Swipe Control", preview)
 
-    if cv2.waitKey(1) & 0xFF == 27:  # ESC
+    if cv2.waitKey(1) & 0xFF == 27:
         break
 
 cap.release()

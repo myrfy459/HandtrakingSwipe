@@ -1,6 +1,6 @@
 import cv2
 
-cap = cv2.VideoCapture(1)  # Ganti 0 dengan 1 atau 2 kalau pakai webcam eksternal
+cap = cv2.VideoCapture(1)  
 
 while True:
     success, frame = cap.read()
@@ -9,7 +9,7 @@ while True:
         break
 
     cv2.imshow("Test Kamera", frame)
-    if cv2.waitKey(1) & 0xFF == 27:  # Tekan ESC untuk keluar
+    if cv2.waitKey(1) & 0xFF == 27:  
         break
 
 cap.release()
